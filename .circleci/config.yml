@@ -14,9 +14,22 @@ jobs:
         - checkout # check out the code in the project directory
         - run: echo "hello world" # run the `echo` command
 # Sequential workflow
+  create_infrastructure: 
+      docker:
+        - image: amazon/aws-cli
+      steps:
+        - checkout
+        - run:
+            name: Create Cloudformation Stack
+            command: |
+              aws cloudformation deploy \
+                --template-file template.yml \
+                --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+                --region us-west-2
 workflows:
   # Name the workflow
   myWorkflow:
     jobs:
       - myjob1
+      - create_infrastructure
       # - myjob2
